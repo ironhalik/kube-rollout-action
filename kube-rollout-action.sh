@@ -1,27 +1,34 @@
+# shellcheck shell=bash
 # This code is meant to be used with
 # https://github.com/ironhalik/kubectl-action-base
-if [ ! -n "${IS_KUBECTL_ACTION_BASE}" ]; then
+if [ -z "${IS_KUBECTL_ACTION_BASE}" ]; then
     echo "::error:: The script is not meant to be used on it's own."
     exit 1
 fi
 
 # kube-rollout-action specific code
-KUBECTL_ARGS="rollout status"
-[ -n "${INPUT_RESOURCE}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} ${INPUT_RESOURCE}"
-[ -n "${INPUT_NAME}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} ${INPUT_NAME}"
-[ -n "${INPUT_NAMESPACE}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} --namespace ${INPUT_NAMESPACE}"
-[ -n "${INPUT_SELECTOR}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} --selector ${INPUT_SELECTOR}"
-[ -n "${INPUT_TIMEOUT}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} --timeout ${INPUT_TIMEOUT}"
+# prep inputs
+RESOURCE="${INPUT_RESOURCE:-${RESOURCE}}"
+NAME="${INPUT_NAME:-${NAME}}"
+SELECTOR="${INPUT_SELECTOR:-${SELECTOR}}"
+TIMEOUT="${INPUT_TIMEOUT:-${TIMEOUT}}"
 
-if [ -n "${INPUT_NAME}" ] && [ -n "${INPUT_SELECTOR}" ]; then
-    echo "name and selector inputs cannot be used together."
+if [ -n "${NAME}" ] && [ -n "${SELECTOR}" ]; then
+    log error "name and selector inputs cannot be used together."
     exit 1
 fi
 
-echo "Running: kubectl ${KUBECTL_ARGS}"
+KUBECTL_ARGS="rollout status"
+[ -n "${RESOURCE}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} ${RESOURCE}"
+[ -n "${NAME}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} ${NAME}"
+[ -n "${SELECTOR}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} --selector ${SELECTOR}"
+[ -n "${TIMEOUT}" ] && KUBECTL_ARGS="${KUBECTL_ARGS} --timeout ${TIMEOUT}"
+
+log info "Running: kubectl ${KUBECTL_ARGS}"
+# shellcheck disable=SC2086
 kubectl ${KUBECTL_ARGS} | tee /tmp/kubectl-output
 
 if [ ! -s /tmp/kubectl-output ]; then 
-    echo "Did not find any resources."
+    log error "Did not find any resources."
     exit 1
 fi

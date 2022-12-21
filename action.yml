@@ -18,10 +18,10 @@ inputs:
   context:
     description: "Context to use if there are multiple."
     required: false
-  # kube-rollout-action specific inputs
   namespace:
-    description: "Namespace to deploy to. You can use env vars here."
-    required: true
+    description: "Namespace to use."
+    required: false
+  # kube-rollout-action specific inputs
   resource:
     description: "Resource to watch."
     required: false
