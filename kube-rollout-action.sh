@@ -7,11 +7,7 @@ if [ -z "${IS_KUBECTL_ACTION_BASE}" ]; then
 fi
 
 # kube-rollout-action specific code
-# prep inputs
-RESOURCE="${INPUT_RESOURCE:-${RESOURCE}}"
-NAME="${INPUT_NAME:-${NAME}}"
-SELECTOR="${INPUT_SELECTOR:-${SELECTOR}}"
-TIMEOUT="${INPUT_TIMEOUT:-${TIMEOUT}}"
+get_inputs RESOURCE NAME SELECTOR TIMEOUT
 
 if [ -n "${NAME}" ] && [ -n "${SELECTOR}" ]; then
     log error "name and selector inputs cannot be used together."
