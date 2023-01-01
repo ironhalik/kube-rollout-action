@@ -20,7 +20,7 @@ teardown() {
     export INPUT_NAME="abc"
     export INPUT_SELECTOR="def"
 
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "name and selector inputs cannot be used together"
     assert_failure
 }
@@ -28,7 +28,7 @@ teardown() {
 @test "name is used correctly" {
     export INPUT_NAME="some-deployment"
 
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment some-deployment --timeout 300s"
     assert_output --partial "error: the server doesn't have a resource type"
     assert_failure
@@ -37,7 +37,7 @@ teardown() {
 @test "name is used correctly (using env var)" {
     export NAME="some-deployment"
 
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment some-deployment --timeout 300s"
     assert_output --partial "error: the server doesn't have a resource type"
     assert_failure
@@ -46,7 +46,7 @@ teardown() {
 @test "selector is used correctly" {
     export INPUT_SELECTOR="hash=abc123"
 
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment --selector hash=abc123 --timeout 300s"
     assert_output --partial "error: the server doesn't have a resource type"
     assert_failure
@@ -55,7 +55,7 @@ teardown() {
 @test "timeout is used correctly" {
     export INPUT_TIMEOUT="1m"
 
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment --timeout 1m"
     assert_output --partial "error: the server doesn't have a resource type"
     assert_failure
