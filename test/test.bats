@@ -30,7 +30,7 @@ teardown() {
 
     run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment some-deployment --timeout 300s"
-    assert_output --partial "error: the server doesn't have a resource type"
+    assert_output --partial "the server could not find the requested resource"
     assert_failure
 }
 
@@ -39,7 +39,7 @@ teardown() {
 
     run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment some-deployment --timeout 300s"
-    assert_output --partial "error: the server doesn't have a resource type"
+    assert_output --partial "the server could not find the requested resource"
     assert_failure
 }
 
@@ -48,7 +48,7 @@ teardown() {
 
     run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment --selector hash=abc123 --timeout 300s"
-    assert_output --partial "error: the server doesn't have a resource type"
+    assert_output --partial "the server could not find the requested resource"
     assert_failure
 }
 
@@ -57,6 +57,6 @@ teardown() {
 
     run kubectl-action.sh
     assert_output --partial "kubectl rollout status deployment --timeout 1m"
-    assert_output --partial "error: the server doesn't have a resource type"
+    assert_output --partial "the server could not find the requested resource"
     assert_failure
 }
